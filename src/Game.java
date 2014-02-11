@@ -49,19 +49,19 @@ public class Game
                 {
                     System.out.print("\n\tThe first computer player has...\t");
                     numCardsToReDeal = a1.aiDiscard(i);
-                    newCurrentCardInDeck = a1.PostDiscardDealCards(deck, currentCardInDeck, numCardsToReDeal);
+                    newCurrentCardInDeck = a1.PostDiscardDealCards(deck, newCurrentCardInDeck, numCardsToReDeal);
                 }
                 else if (1 == i)
                 {
                     System.out.print("\tThe second computer player has...\t");
                     numCardsToReDeal = a2.aiDiscard(i);
-                    newCurrentCardInDeck = a2.PostDiscardDealCards(deck, currentCardInDeck, numCardsToReDeal);
+                    newCurrentCardInDeck = a2.PostDiscardDealCards(deck, newCurrentCardInDeck, numCardsToReDeal);
                 }
                 else
                 {
                     System.out.print("\tThe  last computer player has...\t");
                     numCardsToReDeal = a3.aiDiscard(i);
-                    newCurrentCardInDeck = a3.PostDiscardDealCards(deck, currentCardInDeck, numCardsToReDeal);
+                    newCurrentCardInDeck = a3.PostDiscardDealCards(deck, newCurrentCardInDeck, numCardsToReDeal);
                 }
             }
 
@@ -133,7 +133,7 @@ public class Game
     {
         Scanner stringInput = new Scanner(System.in);
         System.out.println("\n\tIf you'd like to see your opponent's card (and who wouldn't?), just ");
-        System.out.println("\tenter the letter 'Y'.  Otherwise, enter any other character. ->: ");
+        System.out.print("\tenter the letter 'Y'.  Otherwise, enter any other character. ->:" );
         String seeCards = stringInput.nextLine();
         if (seeCards.equals("Y") && numAIPlayers != 0)
         {

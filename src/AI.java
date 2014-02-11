@@ -17,7 +17,7 @@ public class AI extends Player
         if (OnePairOrBetter())
         {
             numCardsToDiscard = Discard();
-            System.out.println("\tat least a pair... ");
+            System.out.println("\tat the very least one pair... ");
             //checkPrintHand();  // for debugging
         }
         else if (Flush())
@@ -136,7 +136,7 @@ public class AI extends Player
             Card maybeMarkedCard = hand.get(i);
             if (maybeMarkedCard.getMarker()) count++;
         }
-        if (count >= 4) return true;
+        if (count == 4) return true;
         else            return false;
     }
 

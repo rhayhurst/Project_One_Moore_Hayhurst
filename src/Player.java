@@ -89,19 +89,24 @@ public class Player
         // so we create scores.  The highest score immedietly wins the game.
         // a tie will be dealt with using "smarts"
 
-        int hScore;
+        int hScore, a1Score, a2Score, a3Score;
+        hScore = a1Score = a2Score = a3Score = 0;
 
-        /*  Uncomment when the time comes
+         // Uncomment when the time comes
         for (int i = 0; i < numPlayers; i++)
         {
             if      (0 == i)  hScore = h.EvaluateHand();
             else if (1 == i) a1Score = a1.EvaluateHand();
-            else if (2 == i) a2Score = a2.EvaluateHAnd();
+            else if (2 == i) a2Score = a2.EvaluateHand();
             else             a3Score = a3.EvaluateHand();
         }
-        */
-        hScore = h.EvaluateHand();
-        System.out.println("\n\n\t\tThe score of the hand is " + hScore);
+
+
+/*
+        int hScore = 0;
+        h.EvaluateHand();
+        System.out.println("THe score is: " + hScore);*/
+        determineWinner(numPlayers, h, a1, a2, a3, hScore, a1Score, a2Score, a3Score);
     }
     public int EvaluateHand()
     {
@@ -115,10 +120,11 @@ public class Player
         if (TwoOfAKind())   { isTwoOfAKind = true;   score = 1;}
         if (TwoPair())      {                        score = 2;}
         if (ThreeOfAKind()) { isThreeOfAKind = true; score = 3;}
-        if (Straight())     {  isStraight = true;    score = 4;}
-        if (Flush())        { isFlush = true;        score = 5;}
+        if (HasStraight())     {  isStraight = true;    score = 4;}
+        if (HasFlush())        { isFlush = true;        score = 5;}
         if (FullHouse(isTwoOfAKind,isThreeOfAKind)) { isFullHouse = true;     score = 6;}
         if (StraightFlush(isFlush,isStraight))      { isStraightFlush = true; score = 7;}
+        if (0 == score)                                           { setHighCardValues();}
         return score;
     }
     public boolean TwoOfAKind()
@@ -245,55 +251,20 @@ public class Player
 
     public boolean ThreeOfAKind()
     {
-        int z = getRank(0); Card zc = createCard(0);
-        int o = getRank(1); Card oc = createCard(1);
-        int t = getRank(2); Card tc = createCard(2);
-        int T = getRank(3); Card Tc = createCard(3);
-        int f = getRank(4); Card fc = createCard(4);
-        if (z == o && z == t)
-        {
-            SetThreeOfAKindCard(z);
-            return true;
-        }
-        if (z == t && z == T)
-        {
-            SetThreeOfAKindCard(z);
-            return true;
-        }
-        if (z == T && z == f)
-        {
-            SetThreeOfAKindCard(z);
-            return true;
-        }
-        if (z == t && z == f)
-        {
-            SetThreeOfAKindCard(z);
-            return true;
-        }
-        if (z == o && z == T)
-        {
-            SetThreeOfAKindCard(z);
-            return true;
-        }
-        if (z == o && z == f)
-        {
-            SetThreeOfAKindCard(z);
-            return true;
-        }
-        if (o == t && o == T)
-        {
-            SetThreeOfAKindCard(o);
-            return true;
-        }
-        if (o == T && o == f)
-        {
-            SetThreeOfAKindCard(o);
-            return true;}
-        if (t == T && t == f)
-        {
-            SetThreeOfAKindCard(t);
-            return true;
-        }
+        int z = getRank(0);
+        int o = getRank(1);
+        int t = getRank(2);
+        int T = getRank(3);
+        int f = getRank(4);
+        if (z == o && z == t) { SetThreeOfAKindCard(z); return true;}
+        if (z == t && z == T) { SetThreeOfAKindCard(z); return true;}
+        if (z == T && z == f) { SetThreeOfAKindCard(z); return true;}
+        if (z == t && z == f) { SetThreeOfAKindCard(z); return true;}
+        if (z == o && z == T) { SetThreeOfAKindCard(z); return true;}
+        if (z == o && z == f) { SetThreeOfAKindCard(z); return true;}
+        if (o == t && o == T) { SetThreeOfAKindCard(o); return true;}
+        if (o == T && o == f) { SetThreeOfAKindCard(o); return true;}
+        if (t == T && t == f) { SetThreeOfAKindCard(t); return true;}
         return false;
     }
     public void SetThreeOfAKindCard(int n)
@@ -305,7 +276,7 @@ public class Player
         }
     }
 
-    public boolean Straight()
+    public boolean HasStraight()
     {
         // check if they are in order.  Then count.  If it's five cards,
         // then they all have to be in consecutive order
@@ -340,7 +311,7 @@ public class Player
         }
         return false;
     }
-    public boolean Flush()
+    public boolean HasFlush()
     {
         int v0, v1, v2, v3, v4;
         v0 = v1 = v2 = v3 = v4 = 0;
@@ -415,9 +386,10 @@ public class Player
                     Card e = hand.get(i);
                     e.setFullHouseValue(threeKindNum);
                 }
+                return true;
             }
         }
-        return true;
+        return false;
     }
     public boolean StraightFlush(boolean isFlush, boolean isStraight)
     {
@@ -428,12 +400,68 @@ public class Player
             for (int i = 0; i < 5; i++)
             {
                 Card d = hand.get(i);
-                d.setStraightHighestCardValue(straightFlushHighestCard);
+                d.setStraightFlushHighestCardValue(straightFlushHighestCard);
             }
             return true;
         }
         return false;
     }
+
+    public void setHighCardValues()
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            if (0 == i)
+            {
+                for (int a = 0; a < 5; a++)
+                {
+                    Card x = hand.get(a);
+                    int valCardZero = getRank(i);
+                    x.setHighCardValueElementZero(valCardZero);
+                }
+            }
+            else if (1 == i)
+            {
+                for (int b = 0; b < 5; b++)
+                {
+                    Card x = hand.get(b);
+                    int valCardOne = getRank(i);
+                    x.setHighCardValueElementOne(valCardOne);
+                }
+            }
+            else if (2 == i)
+            {
+                for (int c = 0; c < 5; c++)
+                {
+                    Card x = hand.get(c);
+                    int valCardTwo = getRank(i);
+                    x.setHighCardValueElementTwo(valCardTwo);
+                }
+            }
+            else if (3 == i)
+            {
+                for (int d = 0; d < 5; d++)
+                {
+                    Card x = hand.get(d);
+                    int valCardThree = getRank(i);
+                    x.setHighCardValueElementThree(valCardThree);
+                }
+            }
+            else
+            {
+                for (int e = 0; e < 5; e++)
+                {
+                    Card x = hand.get(e);
+                    int valCardFour = getRank(i);
+                    x.setHighCardValueElementFour(valCardFour);
+                }
+            }
+        }
+    }
+               /* else if (1 == i) card.setHighCardValueElementOne(rank);
+            else if (2 == i) card.setHighCardValueElementTwo(rank);
+            else if (3 == i) card.setHighCardValueElementThree(rank);
+            else             card.setHighCardValueElementFour(rank);*/
     public int getRank(int c)
     {
         Card card = hand.get(c);
@@ -473,79 +501,59 @@ public class Player
             System.out.println();
         }
     }
-}
-
-    /*
-    public boolean Flush()
+    public void determineWinner(int numPlayers,
+                                 Player h,
+                                 Player a1,
+                                 Player a2,
+                                 Player a3,
+                                 int hScore,
+                                 int a1Score,
+                                 int a2Score,
+                                 int a3Score)
     {
-        Card zero  = hand.get(0); int zSuit =  zero.getSuit();
-        Card one   = hand.get(1); int oSuit =   one.getSuit();
-        Card two   = hand.get(2); int tSuit =   two.getSuit();
-        Card three = hand.get(3); int TSuit = three.getSuit();
-        Card four  = hand.get(4); int fSuit =  four.getSuit();
-        return zSuit == oSuit && zSuit == tSuit && zSuit == TSuit && zSuit == fSuit ? true : false;
-    }
-    public boolean FullHouse()
-    {
-        int rankTripleOne = 0;
-        int positionTripleOne   = 0;
-        int positionTripleTwo   = 0;
-        int positionTripleThree = 0;
-        for (int i = 0; i < 5; i++)
-            for (int j = 1; j < 5; j++)
-            {
-                Card formerCard = hand.get(i);
-                Card latterCard = hand.get(j);
-                int formerRank = formerCard.getRank();
-                int latterRank = latterCard.getRank();
-                if (formerRank == latterRank)
-                {
-                    positionTripleOne = i;
-                    positionTripleTwo = j;
-                    rankTripleOne = formerRank;
-                    for (int k = 0; k < 5; k++)
-                    {
-                        Card tripleCard = hand.get(i);
-                        int possibleTripleRank = tripleCard.getRank();
-                        if (rankTripleOne == possibleTripleRank && k != i && k != j)
-                        {
-                            for (int l = 0; l < 0; l++)
-                                for (int m = 1; m < 5; m++)
-                                {
-                                    Card formerDoubleCard = hand.get(l);
-                                    Card latterDoubleCard = hand.get(m);
-                                    int possibleFormerDoubleRank = formerDoubleCard.getRank();
-                                    int possibleLatterDoubleRank = latterDoubleCard.getRank();
-                                    if (possibleFormerDoubleRank == possibleLatterDoubleRank &&
-                                            possibleFormerDoubleRank != rankTripleOne)
-                                        return true;
-                                }
-                        }
-                    }
-                }
-            }
-        return false;
-    }
-    public void Mark(Card c)
-    {
-        c.setMarker(true);
-    }
+        ArrayList<Integer> playerScores = new ArrayList<Integer>(numPlayers);
 
-
-}// END PLAYER CLASS
-
-
-
-    /*
-    public void printHand()
-    {
-        System.out.println("\n\n\n");
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < numPlayers; i++)
         {
-            Card card = hand.get(i);
-            String text = card.getCardText();
-            System.out.println(text);
+            if      (i == 0) playerScores.add( hScore);
+            else if (i == 1) playerScores.add(a1Score);
+            else if (i == 2) playerScores.add(a2Score);
+            else             playerScores.add(a3Score);
         }
-    }
-*/
 
+
+        /*nt a = playerScores.get(3);
+        System.out.println("And that number is: " + a);*/
+
+        System.out.print("\n\n\n\n\tBefore sorting the scores: ");
+        for (int i = 0; i < numPlayers; i++)
+        {
+            System.out.println(playerScores.get(i));
+        }
+
+        Collections.sort(playerScores);
+
+        System.out.println("After sorting the scores ");
+        for (int i = 0; i < numPlayers; i++)
+        {
+            System.out.println(playerScores.get(i));
+        }
+
+    }
+}// END PLAYER CLASS
+/*
+Collections.sort(hand, new Comparator<Card>()
+        {
+@Override
+public int compare(Card card, Card card2) {
+        return card.getRank() - card2.getRank();
+        }
+/*
+int hCard = 0;
+int twoPair = 1;
+int threeKind = 2;
+int straight = 3;
+int flush = 4;
+int fullHouse = 5;
+int straightFlush = 6;
+*/

@@ -76,7 +76,6 @@ public class Card {
     private int flushCardFour;
     public int getFlushCardZero() {return flushCardZero;}
     public void setFlushCardZero(int flushCardZero) {this.flushCardZero = flushCardZero;}
-
     public int getFlushCardOne() { return flushCardOne;}
     public void setFlushCardOne(int flushCardOne) { this.flushCardOne = flushCardOne;}
     public int getFlushCardTwo() { return flushCardTwo;}
@@ -98,6 +97,27 @@ public class Card {
     public int getStraightFlushHighestCardValue() { return straightFlushHighestCardValue;}
     public void setStraightFlushHighestCardValue(int straightFlushHighestCardValue) {
         this.straightFlushHighestCardValue = straightFlushHighestCardValue;}
+
+    private int highCardValueElementFour;
+    private int highCardValueElementThree;
+    private int highCardValueElementTwo;
+    private int highCardValueElementOne;
+    private int highCardValueElementZero;
+    public int getHighCardValueElementFour() {return highCardValueElementFour;}
+    public void setHighCardValueElementFour(int highCardValueElementFour) {
+        this.highCardValueElementFour = highCardValueElementFour;}
+    public int getHighCardValueElementThree() {return highCardValueElementThree;}
+    public void setHighCardValueElementThree(int highCardValueElementThree) {
+        this.highCardValueElementThree = highCardValueElementThree;}
+    public int getHighCardValueElementTwo() { return highCardValueElementTwo;}
+    public void setHighCardValueElementTwo(int highCardValueElementTwo) {
+        this.highCardValueElementTwo = highCardValueElementTwo;}
+    public int getHighCardValueElementOne() { return highCardValueElementOne;}
+    public void setHighCardValueElementOne(int highCardValueElementOne) {
+        this.highCardValueElementOne = highCardValueElementOne;}
+    public int getHighCardValueElementZero() {  return highCardValueElementZero;}
+    public void setHighCardValueElementZero(int highCardValueElementZero) {
+        this.highCardValueElementZero = highCardValueElementZero;}
 }
 
 
