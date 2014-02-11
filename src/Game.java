@@ -71,6 +71,10 @@ public class Game
             h.createHand();
             p.EvaluateTheFinalHands(numAIPlayers+1, h, a1, a2, a3);
 
+
+
+            // note: the "evaluate the final hands" will eventually be in a loop
+
         }
         /*
          * DO NOT ERASE THE COMMENTS BELOW!!!
