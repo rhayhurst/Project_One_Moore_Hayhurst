@@ -28,6 +28,6 @@ NOTE: if you uncomment the "createHand" line on line 74 in the Game Class and th
 
 Both Amber Moore and myself put in a ton of work on this project -- I'd put it at 50/50.  We utilized pair programming methods (she would code while I would pay attention, pointing out syntax errors, giving ideas, taking notes), and the other way around.
 
-I'd like to point out that netiher Amber nor I have any experience in Java (or any object oriented language, for that matter).  As a resut, there are most likely errors that we don't even realize that we are making, so we would appreciate any feedback that we can get.  
+I'd also like to point out that neither Amber nor I have any experience in Java (or any object oriented language, for that matter).  As a resut, there are most likely errors that we don't even realize that we are making, so we would appreciate any feedback that we can get.  
 
 
