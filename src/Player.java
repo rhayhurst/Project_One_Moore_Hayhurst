@@ -11,6 +11,9 @@ public class Player
     ArrayList<Card> ai1DiscardArr;
     ArrayList<Card> ai2DiscardArr;
     ArrayList<Card> ai3DiscardArr;
+    private int Score;
+    public int getScore() {return Score;}
+    public void setScore(int Score) {this.Score = Score;}
 
 
     public Player()
@@ -44,6 +47,7 @@ public class Player
             Card card = deck.getCard(currentCardInDeck);
             hand.add(card);
         }
+        createHand();  // for debugging
         sortHand();
         return newCurrentCardInDeck = currentCardInDeck;
     }
@@ -89,16 +93,35 @@ public class Player
         // so we create scores.  The highest score immedietly wins the game.
         // a tie will be dealt with using "smarts"
 
-        int hScore, a1Score, a2Score, a3Score;
-        hScore = a1Score = a2Score = a3Score = 0;
+        //int hScore, a1Score, a2Score, a3Score;
+        //hScore = a1Score = a2Score = a3Score = 0
 
          // Uncomment when the time comes
+        boolean a2IsUsed = false;
+        boolean a3IsUsed = false;
         for (int i = 0; i < numPlayers; i++)
         {
-            if      (0 == i)  hScore = h.EvaluateHand();
-            else if (1 == i) a1Score = a1.EvaluateHand();
-            else if (2 == i) a2Score = a2.EvaluateHand();
-            else             a3Score = a3.EvaluateHand();
+            if      (0 == i)
+            {
+                int score = h.EvaluateHand();
+                h.setScore(score);
+            }
+            else if (1 == i)
+            {
+                int score = a1.EvaluateHand();
+                a1.setScore(score);
+            }
+            else if (2 == i)
+            {
+                a2IsUsed = true;
+                int score = a2.EvaluateHand();
+                a2.setScore(score);
+            }
+            else
+            {
+                a3IsUsed = true;
+                int score = a3.EvaluateHand();
+                a3.setScore(score);}
         }
 
 
@@ -106,7 +129,7 @@ public class Player
         int hScore = 0;
         h.EvaluateHand();
         System.out.println("THe score is: " + hScore);*/
-        determineWinner(numPlayers, h, a1, a2, a3, hScore, a1Score, a2Score, a3Score);
+        determineWinner(numPlayers, h, a1, a2, a3, a2IsUsed, a3IsUsed);
     }
     public int EvaluateHand()
     {
@@ -116,7 +139,7 @@ public class Player
         boolean isThreeOfAKind  = false;
         boolean isFullHouse     = false;
         boolean isStraightFlush = false;
-        int score = 0;
+        int score;
         if (TwoOfAKind())   { isTwoOfAKind = true;   score = 1;}
         if (TwoPair())      {                        score = 2;}
         if (ThreeOfAKind()) { isThreeOfAKind = true; score = 3;}
@@ -124,7 +147,7 @@ public class Player
         if (HasFlush())        { isFlush = true;        score = 5;}
         if (FullHouse(isTwoOfAKind,isThreeOfAKind)) { isFullHouse = true;     score = 6;}
         if (StraightFlush(isFlush,isStraight))      { isStraightFlush = true; score = 7;}
-        if (0 == score)                                           { setHighCardValues();}
+        else                                        { score = 0;    setHighCardValues();}
         return score;
     }
     public boolean TwoOfAKind()
@@ -506,39 +529,323 @@ public class Player
                                  Player a1,
                                  Player a2,
                                  Player a3,
-                                 int hScore,
-                                 int a1Score,
-                                 int a2Score,
-                                 int a3Score)
+                                 boolean a2IsUsed,
+                                 boolean a3IsUsed)
     {
+        if (a2IsUsed == false) a2.setScore(-999);
+        if (a3IsUsed == false) a3.setScore(-999);
         ArrayList<Integer> playerScores = new ArrayList<Integer>(numPlayers);
-
+        int tieHandValue;
         for (int i = 0; i < numPlayers; i++)
         {
-            if      (i == 0) playerScores.add( hScore);
-            else if (i == 1) playerScores.add(a1Score);
-            else if (i == 2) playerScores.add(a2Score);
-            else             playerScores.add(a3Score);
+            if      (i == 0) playerScores.add(h.getScore());
+            else if (i == 1) playerScores.add(a1.getScore());
+            else if (i == 2) playerScores.add(a2.getScore());
+            else             playerScores.add(a3.getScore());
         }
-
-
-        /*nt a = playerScores.get(3);
-        System.out.println("And that number is: " + a);*/
-
-        System.out.print("\n\n\n\n\tBefore sorting the scores: ");
-        for (int i = 0; i < numPlayers; i++)
-        {
-            System.out.println(playerScores.get(i));
-        }
-
         Collections.sort(playerScores);
 
-        System.out.println("After sorting the scores ");
-        for (int i = 0; i < numPlayers; i++)
+        int last = playerScores.get(numPlayers-1);
+        int nextToLast = playerScores.get(numPlayers-2);
+        if (last != nextToLast)
         {
-            System.out.println(playerScores.get(i));
+            if      ( h.getScore() == last) winner(h);
+            else if (a1.getScore() == last) winner(a1);
+            else if (a2.getScore() == last) winner(a2);
+            else                            winner(a3);
+        }
+        else
+        {
+            tieHandValue = last;
+            tieBreaker(tieHandValue, h, a1, a2, a3);
+        }
+    }
+
+    public void tieBreaker(int tieHandValue,
+                           Player h,
+                           Player a1,
+                           Player a2,
+                           Player a3)
+    {
+
+        ArrayList<Player> tieList = new ArrayList<Player>();
+        if (tieHandValue ==  h.getScore())
+        {
+            tieList.add(h);
+        }
+        if (tieHandValue == a1.getScore())
+        {
+            tieList.add(a1);
+        }
+        if (tieHandValue == a2.getScore())
+        {
+            tieList.add(a2);
+        }
+        if (tieHandValue == a3.getScore())
+        {
+            tieList.add(a3);
+        }
+        //---------------------------------//
+        if (0 == tieHandValue)
+        {
+            tieHighCard(tieList);
+        }
+        else if (3 == tieHandValue)
+        {
+            tieThreeKind(tieList);
+        }
+        else if (4 == tieHandValue)
+        {
+            tieStraight(tieList);
+        }
+        else if (5 == tieHandValue)
+        {
+            tieFlush(tieList);
+        }
+        else if (6 == tieHandValue)
+        {
+            tieFullHouse(tieList);
+        }
+    }
+    public void tieHighCard(ArrayList<Player> tieList)
+    {
+        ArrayList<Integer> cardVal = new ArrayList<Integer>();
+        ArrayList<Integer> cardVal2 = new ArrayList<Integer>();
+        ArrayList<Integer> cardVal3 = new ArrayList<Integer>();
+        ArrayList<Integer> cardVal4 = new ArrayList<Integer>();
+        ArrayList<Integer> cardVal5 = new ArrayList<Integer>();
+         ArrayList<Player> fourthHighestCard = new ArrayList<Player>();
+        ArrayList<Player> thirdHighestCard = new ArrayList<Player>();
+        ArrayList<Player> secondHighestCard = new ArrayList<Player>();
+        ArrayList<Player> firstHighestCard = new ArrayList<Player>();
+        ArrayList<Player> zerothHighestCard = new ArrayList<Player>();
+
+        for (int i = 0; i < tieList.size(); i++)
+        {
+            Player c = tieList.get(i);
+            Card cCard = c.hand.get(0);
+            cardVal.add(cCard.getHighCardValueElementFour());
+        }
+        Collections.sort(cardVal);
+        int highestCard = cardVal.get(cardVal.size() - 1);
+
+        for (int i = 0; i < tieList.size(); i++)
+        {
+            Player p = tieList.get(i);
+            Card dCard = p.hand.get(0);
+            int dCardVal = dCard.getHighCardValueElementFour();
+            if (highestCard == dCardVal)
+            {
+                fourthHighestCard.add(p);
+            }
         }
 
+        /*****************************************************************************/
+        if (fourthHighestCard.size() == 1) winner(fourthHighestCard.get(0));
+        else
+        {
+            for (int i = 0; i < fourthHighestCard.size(); i++)
+            {
+                Player p = fourthHighestCard.get(i);
+                Card cCard = p.hand.get(i);
+                cardVal2.add(cCard.getHighCardValueElementThree());
+            }
+            Collections.sort(cardVal2);
+            int element2Val = cardVal2.get(cardVal2.size()-1);
+            for (int i = 0; i < fourthHighestCard.size(); i++)
+            {
+                Player p = fourthHighestCard.get(i);
+                Card dCard = p.hand.get(0);
+                int dCardVal2 = dCard.getHighCardValueElementThree();
+                if (element2Val == dCardVal2)
+                {
+                    thirdHighestCard.add(p);
+                }
+            }
+
+            /*****************************************************************************/
+
+            if (thirdHighestCard.size() == 1) winner(thirdHighestCard.get(0));
+            else
+            {
+                for (int i = 0; i < thirdHighestCard.size(); i++)
+                {
+                    Player p = thirdHighestCard.get(i);
+                    Card dCard = p.hand.get(0);
+                    cardVal3.add(dCard.getHighCardValueElementTwo());
+                }
+                Collections.sort(cardVal3);
+                int element3Val = cardVal3.get(cardVal3.size()-1);
+                for (int i = 0; i < thirdHighestCard.size(); i++)
+                {
+                    Player p = thirdHighestCard.get(i);
+                    Card dCard = p.hand.get(0);
+                    int dCardVal3 = dCard.getHighCardValueElementTwo();
+                    if (element3Val == dCardVal3)
+                    {
+                        secondHighestCard.add(p);
+                    }
+                }
+
+                /*****************************************************************************/
+
+                if (secondHighestCard.size() == 1) winner(secondHighestCard.get(0));
+                else
+                {
+                    for (int i = 0; i < secondHighestCard.size(); i++)
+                    {
+                        Player p = secondHighestCard.get(i);
+                        Card dCard = p.hand.get(0);
+                        cardVal4.add(dCard.getHighCardValueElementOne());
+                    }
+                    Collections.sort(cardVal4);
+                    int element4Val = cardVal4.get(cardVal4.size()-1);
+                    for (int i = 0; i < secondHighestCard.size(); i++)
+                    {
+                        Player p = secondHighestCard.get(i);
+                        Card dCard = p.hand.get(0);
+                        int dCardVal4 = dCard.getHighCardValueElementOne();
+                        if (element4Val == dCardVal4)
+                        {
+                            firstHighestCard.add(p);
+                        }
+                    }
+
+                    /*****************************************************************************/
+
+                    if (firstHighestCard.size() == 1) winner(firstHighestCard.get(0));
+                    else
+                    {
+                        for (int i = 0; i < firstHighestCard.size(); i++)
+                        {
+                            Player p = firstHighestCard.get(i);
+                            Card dCard = p.hand.get(0);
+                            cardVal5.add(dCard.getHighCardValueElementZero());
+                        }
+                        Collections.sort(cardVal5);
+                        int element5Val = cardVal5.get(cardVal5.size()-1);
+                        for (int i = 0; i < firstHighestCard.size(); i++)
+                        {
+                            Player p = firstHighestCard.get(i);
+                            Card dCard = p.hand.get(0);
+                            int dCardVal5 = dCard.getHighCardValueElementZero();
+                            if (element5Val == dCardVal5)
+                            {
+                                zerothHighestCard.add(p);
+                            }
+                        }
+
+                        /*****************************************************************************/
+
+                        if (zerothHighestCard.size() == 1) winner(zerothHighestCard.get(0));
+                        else
+                        {
+                            for (int i = 0; i < zerothHighestCard.size(); i++)
+                            {
+                                Player p = zerothHighestCard.get(i);
+                                tie(p);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    public void tieThreeKind(ArrayList<Player> tieList)
+    {
+        ArrayList<Integer> cardVal = new ArrayList<Integer>();
+        for (int i = 0; i < tieList.size(); i++)
+        {
+            Player p = tieList.get(i);
+            Card c = p.hand.get(0);
+            //int val = c.getThreeOfAKindValue();
+            cardVal.add(c.getRankThreeOfAKindCard());
+        }
+        Collections.sort(cardVal);
+        int highestCardThreeOfAKind = cardVal.get(cardVal.size()-1);
+        for (int i = 0; i < tieList.size(); i++)
+        {
+            Player p = tieList.get(i);
+            Card c = p.hand.get(0);
+            int val = c.getRankThreeOfAKindCard();
+            if (highestCardThreeOfAKind == val)
+            {
+                System.out.println("\tWins with a three of a kind!!");
+                winner(p);
+            }
+        }
+    }
+    public void tieStraight(ArrayList<Player> tieList)
+    {
+        ArrayList<Integer> cardVal = new ArrayList<Integer>();
+        ArrayList<Player> FinalTiePlayers = new ArrayList<Player>();
+        for (int i = 0; i < tieList.size(); i++)
+        {
+            Player p = tieList.get(i);
+            Card c = p.hand.get(0);
+            cardVal.add(c.getStraightHighestCardValue());
+        }
+        Collections.sort(cardVal);
+        int highestOfTheStraightHighCards = cardVal.get(cardVal.size()-1);
+        for (int i = 0; i < tieList.size(); i++)
+        {
+            Player p = tieList.get(i);
+            Card c = p.hand.get(0);
+            int val = c.getStraightHighestCardValue();
+            if (val == highestOfTheStraightHighCards)
+            {
+                FinalTiePlayers.add(p);
+            }
+        }
+        if (FinalTiePlayers.size() == 1)
+        {
+            Player p = FinalTiePlayers.get(0);
+            winner(p);
+        }
+        for (int i = 0; i < FinalTiePlayers.size(); i++)
+        {
+            Player p = FinalTiePlayers.get(i);
+            System.out.println("\t\nA Straight tie.  A true rarity.  Go Play the lottery.");
+            tie(p);
+        }
+        System.exit(0);
+    }
+    public void tieFlush(ArrayList<Player> tieList)
+    {
+
+    }
+    public void tieFullHouse(ArrayList<Player> tieList)
+    {
+        ArrayList<Integer> cardVal = new ArrayList<Integer>();
+        for (int i = 0; i < tieList.size(); i++)
+        {
+            Player p = tieList.get(i);
+            Card c = p.hand.get(0);
+            cardVal.add(c.getFullHouseValue());
+        }
+        Collections.sort(cardVal);
+        int highestFullHouseValue = cardVal.get(cardVal.size()-1);
+        for (int i = 0; i < tieList.size(); i++)
+        {
+            Player p = tieList.get(i);
+            Card c = p.hand.get(0);
+            int val = c.getRankThreeOfAKindCard();
+            if (highestFullHouseValue == val)
+            {
+                System.out.println("\tOh, the excitement!  The humanity! A Full House!");
+                winner(p);
+            }
+        }
+    }
+    public void winner(Player winner)
+    {
+        System.out.println("\n\tCongratulations.  " + winner + " wins the game!");
+        System.exit(0);
+    }
+    public void tie(Player p)
+    {
+        System.out.println("You are not quite a winner, " + p + ".  You have to share.");
+        System.out.println("Sharing is caring.");
     }
 }// END PLAYER CLASS
 /*

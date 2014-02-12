@@ -28,7 +28,6 @@ public class Game
 
         // discard and re-deal for human player
         int numCardsToReDeal = h.humanDiscard();
-        //a1.createHand();    // for debugging
         int newCurrentCardInDeck = h.PostDiscardDealCards(deck, currentCardInDeck, numCardsToReDeal);
         System.out.print("\n\tDealer takes your discarded cards...\t");
         h.showHandToPlayer();
@@ -68,7 +67,7 @@ public class Game
             // We can show the final hand and determine the winner
             Player p = new Player();
             p.showFinalHand(numAIPlayers, h, a1, a2, a3);
-            h.createHand();
+          //  h.createHand();
             p.EvaluateTheFinalHands(numAIPlayers+1, h, a1, a2, a3);
 
 

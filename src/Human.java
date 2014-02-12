@@ -13,6 +13,7 @@ public class Human extends Player
 {
     ArrayList<String> hDiscardList;
 
+
     public Human()
     {
         super();
