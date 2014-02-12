@@ -19,6 +19,10 @@ public class Game
         Human h  = new Human();
         AI a1 = new AI(); AI a2 = new AI(); AI a3 = new AI();
         int numAIPlayers = getNumPlayers();
+        h.setName("Human");
+        a1.setName("Computer 1");
+        a2.setName("Computer 2");
+        a3.setName("Computer 3");
 
         // deal and display the cards
         System.out.print("\tDealer cracks open a fresh pack of cards...\t");
@@ -28,7 +32,7 @@ public class Game
 
         // discard and re-deal for human player
         int numCardsToReDeal = h.humanDiscard();
-        int newCurrentCardInDeck = h.PostDiscardDealCards(deck, currentCardInDeck, numCardsToReDeal);
+        int newCurrentCardInDeck = h.PostDiscardDealCards(deck, currentCardInDeck+1, numCardsToReDeal);
         System.out.print("\n\tDealer takes your discarded cards...\t");
         h.showHandToPlayer();
 
@@ -48,26 +52,26 @@ public class Game
                 {
                     System.out.print("\n\tThe first computer player has...\t");
                     numCardsToReDeal = a1.aiDiscard(i);
-                    newCurrentCardInDeck = a1.PostDiscardDealCards(deck, newCurrentCardInDeck, numCardsToReDeal);
+                    newCurrentCardInDeck = a1.PostDiscardDealCards(deck, newCurrentCardInDeck+1, numCardsToReDeal);
                 }
                 else if (1 == i)
                 {
                     System.out.print("\tThe second computer player has...\t");
                     numCardsToReDeal = a2.aiDiscard(i);
-                    newCurrentCardInDeck = a2.PostDiscardDealCards(deck, newCurrentCardInDeck, numCardsToReDeal);
+                    newCurrentCardInDeck = a2.PostDiscardDealCards(deck, newCurrentCardInDeck+1, numCardsToReDeal);
                 }
                 else
                 {
                     System.out.print("\tThe  last computer player has...\t");
                     numCardsToReDeal = a3.aiDiscard(i);
-                    newCurrentCardInDeck = a3.PostDiscardDealCards(deck, newCurrentCardInDeck, numCardsToReDeal);
+                    newCurrentCardInDeck = a3.PostDiscardDealCards(deck, newCurrentCardInDeck+1, numCardsToReDeal);
                 }
             }
 
             // We can show the final hand and determine the winner
             Player p = new Player();
             p.showFinalHand(numAIPlayers, h, a1, a2, a3);
-          //  h.createHand();
+          //h.createHand();
             p.EvaluateTheFinalHands(numAIPlayers+1, h, a1, a2, a3);
 
 
