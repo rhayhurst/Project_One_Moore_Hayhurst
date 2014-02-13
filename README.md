@@ -30,6 +30,6 @@ Both Amber Moore and myself put in a ton of work on this project -- I'd put it a
 
 There is a bug in the program, in the assignment of winners.  The hands are evaluated correctly, but occasionally the wrong winner is declared.  We think that it should be easy to fix, and will include the fix in the final design report.
 
-I'd also like to point out that neither Amber nor I have any experience in Java (or any object oriented language, for that matter).  As a resut, there are most likely errors that we don't even realize that we are making, so we would appreciate any feedback that we can get.  
+I'd also like to point out that neither Amber nor I have any experience in Java (or any object oriented language, for that matter).  As a result, there are most likely errors that we don't even realize that we are making, so we would appreciate any feedback that we can get.  
 
 
